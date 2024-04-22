@@ -34,6 +34,25 @@ async def start(ctx):
         else:
             # 하고 있는 상태라면
             await ctx.send(f'{ctx.author.name}님, 이미 하고 계신걸요!')
-            
+
+@bot.command(name='e')
+async def end(ctx):
+    global start_time
+    # 해당 사용자가 있고 공부를 시작했다면
+    if ctx.author.id in start_time:
+        start_t = start_time.pop(ctx.author.id)
+        end_t = datetime.datetime.now()
+        total_time[ctx.author.id] += (end_t - start_t).total_seconds()
+        
+        #시분초 계산
+        total_seconds = int(total_time[ctx.author.id])
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60 
+        
+        
+        await ctx.send(f"{ctx.author.name}님, 공부를 종료했습니다. 공부한 시간: {hours:02d}:{minutes:02d}:{seconds:02d}")
+    else:
+        await ctx.send("공부를 시작하지 않았습니다.")
  
 bot.run(Token)
