@@ -11,6 +11,14 @@ bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all())
 start_time = {} # 시작시간
 total_time = {} # 총 시간
 
+def time_calculation(total):
+    total_seconds = int(total)
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    
+    return hours, minutes,seconds
+
 # 봇이 준비되었을 때 실행되는 이벤트
 @bot.event
 async def on_ready():
@@ -45,11 +53,7 @@ async def end(ctx):
         total_time[ctx.author.id] += (end_t - start_t).total_seconds()
         
         #시분초 계산
-        total_seconds = int(total_time[ctx.author.id])
-        hours = total_seconds // 3600
-        minutes = (total_seconds % 3600) // 60
-        seconds = total_seconds % 60 
-        
+        hours,minutes,seconds = time_calculation(total_time[ctx.author.id])
         
         await ctx.send(f"{ctx.author.name}님, 공부를 종료했습니다. 공부한 시간: {hours:02d}:{minutes:02d}:{seconds:02d}")
     else:
@@ -68,23 +72,16 @@ async def end(ctx):
             # 그전 총시간이랑 현재 공부시간을 합해줘서 계산
             start_t = start_time[ctx.author.id]
             end_t = datetime.datetime.now()
-            tmp= total_time[ctx.author.id] + (end_t - start_t).total_seconds()
             
             #시분초 계산
-            total_seconds = int(tmp)
-            hours = total_seconds // 3600
-            minutes = (total_seconds % 3600) // 60
-            seconds = total_seconds % 60 
+            hours,minutes,seconds = time_calculation(total_time[ctx.author.id] + (end_t - start_t).total_seconds())
             
             await ctx.send(f"{ctx.author.name}님, 현재 공부시간: {hours:02d}:{minutes:02d}:{seconds:02d}")
         else:
             # 공부 중이 아니라면
             
             #시분초 계산
-            total_seconds = int(total_time[ctx.author.id])
-            hours = total_seconds // 3600
-            minutes = (total_seconds % 3600) // 60
-            seconds = total_seconds % 60 
+            hours,minutes,seconds = time_calculation(total_time[ctx.author.id])
             
             await ctx.send(f"{ctx.author.name}님, 현재 공부시간: {hours:02d}:{minutes:02d}:{seconds:02d}")
         
